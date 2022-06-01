@@ -30,5 +30,15 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+  height: 100%;
+  width: 60%;
+  margin-left: auto;
+  margin-right: auto;
+}
+body {
+  height: 100%;
+}
+html {
+  height: 100%;
 }
 </style>

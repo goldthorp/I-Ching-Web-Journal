@@ -1,8 +1,8 @@
 <template>
     <div v-if="!content && !isHex">
+      <button class="save_button" @click="saveNew">save</button>
+      <button class="throw_button" @click="clickThrowHex">throw hex</button>
       <textarea v-model="newContent"></textarea>
-      <button @click="saveNew">save</button>
-      <button @click="clickThrowHex">throw hex</button>
     </div>
   <div v-if="content">
     <p class="entry_date">{{ date }}</p>
@@ -127,7 +127,7 @@ button {
   margin-right: auto;
 }
 textarea {
-  width: 400px;
+  width: 100%;
   height: 100px;
 }
 .entry_date {
@@ -178,5 +178,11 @@ textarea {
 }
 .changing_dot_container {
   padding-top: 2px;
+}
+.save_button {
+  float: right;
+}
+.throw_button {
+  float: left;
 }
 </style>
