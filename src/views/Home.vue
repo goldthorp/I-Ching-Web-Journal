@@ -1,7 +1,9 @@
 <template>
     <button class="sign_out_button" @click="signOut">sign out</button>
-    <div v-for="entry in entries" :key="entry.id">
-        <EntryView v-bind="entry"/>
+    <div class="entries_container" ref="entries_container">
+      <div v-for="entry in entries" :key="entry.id">
+          <EntryView v-bind="entry"/>
+      </div>
     </div>
     <EntryView v-on:saveEntry="saveNewEntry"/>
 </template>
@@ -38,6 +40,12 @@ export default {
                         timestamp: entryData.timestamp
                     });
                 }); 
+                const container = this.$refs['entries_container'];
+                setTimeout(() => {
+                  if (container) {
+                    container.scrollTop = container.scrollHeight
+                  } 
+                });
             });
         } else {
             if (removeSnapshotListener) {
@@ -66,5 +74,9 @@ export default {
 <style scoped>
 .sign_out_button {
     margin-bottom: 50px;
+}
+.entries_container {
+  height: 70%;
+  overflow: scroll;
 }
 </style>
