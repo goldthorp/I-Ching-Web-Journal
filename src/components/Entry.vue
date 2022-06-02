@@ -1,7 +1,7 @@
 <template>
-    <div v-if="!content && !isHex">
-      <button class="save_button" @click="saveNew">save</button>
-      <button class="throw_button" @click="clickThrowHex">throw hex</button>
+    <div v-if="!content && !isHex" class="mt-2">
+      <button class="save_button btn btn-primary mb-2" @click="saveNew">save</button>
+      <button class="throw_button btn btn-primary mb-2" @click="clickThrowHex">throw hex</button>
       <textarea v-model="newContent"></textarea>
     </div>
   <div v-if="content">
@@ -12,7 +12,7 @@
     <div class="row">
       <div :class="{'col-md-3 col-md-offset-3': hasChangingLines}"></div>
       <div class="hex_container col-md-3"
-        :class="{center: !hasChangingLines}">
+        :class="{'mx-auto': !hasChangingLines}">
         <div  v-for="line in hexLines" :key="line.idx">
           <div v-if="line.val % 2 === 1">
             <div class="line">
@@ -56,8 +56,8 @@
   </div>
 
     <div v-if="!content && isHex">
-      <button @click="throwLine">throw line</button>
-      <button @click="cancelThrowHex">cancel</button>
+      <button class="btn btn-primary" @click="throwLine">throw line</button>
+      <button class="btn btn-primary" @click="cancelThrowHex">cancel</button>
     </div>
 </template>
 
@@ -221,9 +221,5 @@ textarea {
 }
 .throw_button {
   float: left;
-}
-.center {
-  margin-left: auto;
-  margin-right: auto;
 }
 </style>

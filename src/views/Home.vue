@@ -1,5 +1,5 @@
 <template>
-    <button class="sign_out_button" @click="signOut">sign out</button>
+    <button class="btn btn-primary mb-3" @click="signOut">sign out</button>
     <div class="entries_container" ref="entries_container">
       <div v-for="entry in entries" :key="entry.id">
           <EntryView v-bind="entry"/>
