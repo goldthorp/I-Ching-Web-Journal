@@ -9,22 +9,46 @@
     <p class="entry_text" v-if="!isHex">{{ content }}</p>
   </div>
   <div v-if="isHex">
-    <div class="hex_container">
-      <div  v-for="line in hexLines" :key="line.idx">
-        <div v-if="line.val % 2 === 1">
-          <div class="line">
-            <div class="long_line">
-              <div class="changing_dot_container" v-if="line.val === 9">
-                <div class="changing_dot changing_dot_white"></div>
+    <div class="row">
+      <div :class="{'col-md-3 col-md-offset-3': hasChangingLines}"></div>
+      <div class="hex_container col-md-3"
+        :class="{center: !hasChangingLines}">
+        <div  v-for="line in hexLines" :key="line.idx">
+          <div v-if="line.val % 2 === 1">
+            <div class="line">
+              <div class="long_line">
+                <div class="changing_dot_container" v-if="line.val === 9">
+                  <div class="changing_dot changing_dot_white"></div>
+                </div>
               </div>
             </div>
           </div>
+          <div class="line" v-else>
+            <div class="short_line_left"></div>
+            <div class="short_line_right"></div>
+            <div class="changing_dot_container" v-if="line.val === 6">
+              <div class="changing_dot"></div>
+            </div>
+          </div>
         </div>
-        <div class="line" v-else>
-          <div class="short_line_left"></div>
-          <div class="short_line_right"></div>
-          <div class="changing_dot_container" v-if="line.val === 6">
-            <div class="changing_dot"></div>
+      </div>  
+      <div class="hex_container col-md-3" v-if="hasChangingLines">
+        <div  v-for="line in secondaryHexLines" :key="line.idx">
+          <div v-if="line.val % 2 === 1">
+            <div class="line">
+              <div class="long_line">
+                <div class="changing_dot_container" v-if="line.val === 9">
+                  <div class="changing_dot changing_dot_white"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="line" v-else>
+            <div class="short_line_left"></div>
+            <div class="short_line_right"></div>
+            <div class="changing_dot_container" v-if="line.val === 6">
+              <div class="changing_dot"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -52,7 +76,9 @@ export default {
     return {
       newContent: '',
       hexLines: [],
-      isHex: false
+      isHex: false,
+      hasChangingLines: false,
+      secondaryHexLines: []
     }
   },
   computed: {
@@ -95,9 +121,20 @@ export default {
       if (this.content.indexOf(hexPrefix) === 0) {
         this.isHex = true;
         const hexStr = this.content.substring(hexPrefix.length);
-        hexStr.split('').forEach((lineNumber, idx) => {
-          this.hexLines.push({val: Number(lineNumber), idx: idx})
-        })
+        hexStr.split('').forEach((lineNumberStr, idx) => {
+          let lineNumber = Number(lineNumberStr);
+          this.hexLines.push({val: lineNumber, idx: idx});
+          if (lineNumber === 6) {
+            this.hasChangingLines = true;
+            this.secondaryHexLines.push({val: 7, idx: idx});
+          } else if (lineNumber === 9) {
+            this.hasChangingLines = true;
+            this.secondaryHexLines.push({val: 8, idx: idx});
+          } else {
+            this.secondaryHexLines.push({val: lineNumber, idx: idx});
+          }
+        });
+        
       }
     }
   }
@@ -139,7 +176,7 @@ textarea {
   margin-top: 0;
 }
 .hex_container {
-  height: 110px;
+  height: 130px;
   transform: rotate(180deg);
   margin-bottom: 10px;
 }
@@ -184,5 +221,9 @@ textarea {
 }
 .throw_button {
   float: left;
+}
+.center {
+  margin-left: auto;
+  margin-right: auto;
 }
 </style>

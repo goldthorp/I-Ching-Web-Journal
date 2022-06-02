@@ -1,6 +1,8 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import { router } from './router';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.min.js";
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getFirestore } from 'firebase/firestore';
