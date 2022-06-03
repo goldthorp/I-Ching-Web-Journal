@@ -77,6 +77,7 @@ export default {
 }
 .entries_container {
   height: 70%;
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 </style>

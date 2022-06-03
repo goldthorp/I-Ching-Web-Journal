@@ -9,9 +9,8 @@
     <p class="entry_text" v-if="!isHex">{{ content }}</p>
   </div>
   <div v-if="isHex">
-    <div class="row">
-      <div :class="{'col-md-3 col-md-offset-3': hasChangingLines}"></div>
-      <div class="hex_container col-md-3"
+    <div class="row justify-content-center">
+      <div class="hex_container col-4 col-md-2"
         :class="{'mx-auto': !hasChangingLines}">
         <div  v-for="line in hexLines" :key="line.idx">
           <div v-if="line.val % 2 === 1">
@@ -32,7 +31,11 @@
           </div>
         </div>
       </div>  
-      <div class="hex_container col-md-3" v-if="hasChangingLines">
+      <div v-if="hasChangingLines" class="col-2 col-md-1 arrow_container">
+        <span><!-- helper element for vertical alignment of image /!--></span>
+        <img src="@/assets/icons8-arrow-30.png">
+      </div>
+      <div class="hex_container col-4 col-md-2" v-if="hasChangingLines">
         <div  v-for="line in secondaryHexLines" :key="line.idx">
           <div v-if="line.val % 2 === 1">
             <div class="line">
@@ -158,7 +161,6 @@ a {
   color: #42b983;
 }
 button {
-  /* clear: both; */
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -221,5 +223,13 @@ textarea {
 }
 .throw_button {
   float: left;
+}
+.arrow_container>span {
+  vertical-align: middle;
+  height: 100%; 
+  display: inline-block
+}
+.arrow_container>img {
+  margin-top: -10px;
 }
 </style>
