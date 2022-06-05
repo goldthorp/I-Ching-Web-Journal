@@ -34,6 +34,16 @@ export default {
   margin-left: auto;
   margin-right: auto;
 }
+@media screen and (min-width: 820px) {
+  #app {
+    width: 80%;
+  }
+}
+@media screen and (min-width: 1200px) {
+  #app {
+    width: 60%;
+  }
+}
 body {
   height: 100%;
 }
