@@ -151,11 +151,6 @@ textarea {
 .entry_text {
   margin-top: 0;
 }
-.hex_container {
-  height: 130px;
-  transform: rotate(180deg);
-  margin-bottom: 10px;
-}
 .save_button {
   float: right;
 }

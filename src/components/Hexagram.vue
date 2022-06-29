@@ -31,6 +31,11 @@ export default {
 }
 </script>
 <style scoped>
+.hex_container {
+  height: 130px;
+  transform: rotate(180deg);
+  margin-bottom: 10px;
+}
 .line {
   width: 100px;
   height: 10px;
