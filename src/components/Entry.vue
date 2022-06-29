@@ -10,51 +10,15 @@
   </div>
   <div v-if="isHex">
     <div class="row justify-content-center">
-      <div class="hex_container col-4 col-md-2"
-        :class="{'mx-auto': !hasChangingLines}">
-        <div  v-for="line in hexLines" :key="line.idx">
-          <div v-if="line.val % 2 === 1">
-            <div class="line">
-              <div class="long_line">
-                <div class="changing_dot_container" v-if="line.val === 9">
-                  <div class="changing_dot changing_dot_white"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="line" v-else>
-            <div class="short_line_left"></div>
-            <div class="short_line_right"></div>
-            <div class="changing_dot_container" v-if="line.val === 6">
-              <div class="changing_dot"></div>
-            </div>
-          </div>
-        </div>
-      </div>  
+      <HexagramView :lines="hexLines"
+        :class="{'mx-auto': !hasChangingLines}" @click="clickHexagram(hexLines)"/>
       <div v-if="hasChangingLines" class="col-2 col-md-1 arrow_container">
         <span><!-- helper element for vertical alignment of image /!--></span>
         <img src="@/assets/icons8-arrow-30.png">
       </div>
-      <div class="hex_container col-4 col-md-2" v-if="hasChangingLines">
-        <div  v-for="line in secondaryHexLines" :key="line.idx">
-          <div v-if="line.val % 2 === 1">
-            <div class="line">
-              <div class="long_line">
-                <div class="changing_dot_container" v-if="line.val === 9">
-                  <div class="changing_dot changing_dot_white"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="line" v-else>
-            <div class="short_line_left"></div>
-            <div class="short_line_right"></div>
-            <div class="changing_dot_container" v-if="line.val === 6">
-              <div class="changing_dot"></div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <HexagramView :lines="secondaryHexLines"
+      v-if="hasChangingLines" @click="clickHexagram(secondaryHexLines)"/>
+        
     </div>
   </div>
 
@@ -65,11 +29,16 @@
 </template>
 
 <script>
+import {hexagramIndex} from '../util/hexagram-index';
+import HexagramView from './Hexagram.vue'
 
 const hexPrefix = '/hex:';
 
 export default {
   name: 'EntryView',
+  components: {
+    HexagramView
+  },
   props: {
     id: String,
     content: String,
@@ -116,9 +85,12 @@ export default {
       var coin2 = Math.random() < .5;
       var coin3 = Math.random() < .5;
       return (coin1 ? 3 : 2) + (coin2 ? 3 : 2) + (coin3 ? 3 : 2);
-    } 
+    },
+    clickHexagram(lines) {
+      this.$emit('clickHexagram', lines);
+    }
   },
-  emits: ['saveEntry'],
+  emits: ['saveEntry', 'clickHexagram'],
   mounted() {
     if (this.content) {
       if (this.content.indexOf(hexPrefix) === 0) {
@@ -127,14 +99,16 @@ export default {
         hexStr.split('').forEach((lineNumberStr, idx) => {
           let lineNumber = Number(lineNumberStr);
           this.hexLines.push({val: lineNumber, idx: idx});
-          if (lineNumber === 6) {
-            this.hasChangingLines = true;
-            this.secondaryHexLines.push({val: 7, idx: idx});
-          } else if (lineNumber === 9) {
-            this.hasChangingLines = true;
-            this.secondaryHexLines.push({val: 8, idx: idx});
-          } else {
-            this.secondaryHexLines.push({val: lineNumber, idx: idx});
+          if (!this.primaryOnly) {
+            if (lineNumber === 6) {
+              this.hasChangingLines = true;
+              this.secondaryHexLines.push({val: 7, idx: idx});
+            } else if (lineNumber === 9) {
+              this.hasChangingLines = true;
+              this.secondaryHexLines.push({val: 8, idx: idx});
+            } else {
+              this.secondaryHexLines.push({val: lineNumber, idx: idx});
+            }
           }
         });
         
@@ -181,42 +155,6 @@ textarea {
   height: 130px;
   transform: rotate(180deg);
   margin-bottom: 10px;
-}
-.line {
-  width: 100px;
-  height: 10px;
-  margin: 10px auto;
-}
-.long_line {
-  background: black;
-  width: 100%;
-  height: 100%;
-}
-.short_line_left {
-  background: black;
-  width: 45%;
-  height: 100%;
-  float: left;
-}
-.short_line_right {
-  background: black;
-  width: 45%;
-  height: 100%;
-  float: right;
-}
-.changing_dot {
-  height: 6px;
-  width: 6px;
-  margin: auto;
-  border-radius: 100%;
-  background: black;
-}
-.changing_dot_white {
-  background: white;
-  margin: auto;
-}
-.changing_dot_container {
-  padding-top: 2px;
 }
 .save_button {
   float: right;

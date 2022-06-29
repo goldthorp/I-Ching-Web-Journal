@@ -2,26 +2,48 @@
     <button class="btn btn-primary mb-3" @click="signOut">sign out</button>
     <div class="entries_container" ref="entries_container">
       <div v-for="entry in entries" :key="entry.id">
-          <EntryView v-bind="entry"/>
+          <EntryView v-bind="entry" @clickHexagram="clickHexagram"/>
       </div>
     </div>
     <EntryView v-on:saveEntry="saveNewEntry"/>
+    <MDBModal
+      tabindex="-1"
+      v-model="showHexagramModal">
+      <MDBModalBody>
+        <HexagramView class="mx-auto" :lines="modalHexagramLines"/>
+        <h3>{{modalHexagramNumber}}</h3>
+      </MDBModalBody>
+      <MDBModalFooter>
+        <button class="btn btn-default"
+          @click="showHexagramModal = false">Close</button>
+        <a class="btn btn-primary" target="_blank"
+          :href="'http://www2.unipr.it/~deyoung/I_Ching_Wilhelm_Translation.html#' + modalHexagramNumber">View Wilhelm</a>
+      </MDBModalFooter>
+    </MDBModal>
 </template>
 
 <script>
 import EntryView from '../components/Entry.vue';
+import HexagramView from '../components/Hexagram.vue';
 import { auth, database } from '../main';
 import { collection, onSnapshot, query, addDoc, Timestamp, orderBy, doc, getDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from '@firebase/auth';
+import { MDBModal, MDBModalBody, MDBModalFooter, MDBBtn } from 'mdb-vue-ui-kit';
+import { hexagramIndex } from '@/util/hexagram-index';
 
 export default {
     name: 'HomeView',
-  components: {
-    EntryView
-  },
+    components: {
+      EntryView,
+      MDBModal,
+      MDBModalBody,
+      MDBModalFooter,
+      HexagramView
+    },
   data() {
     return {
-      entries: []
+      entries: [],
+      showHexagramModal: false
     };
   },
   mounted() {
@@ -66,6 +88,23 @@ export default {
     },
     onVisibilityChanged(isVisible) {
         console.log(isVisible)
+    },
+    clickHexagram(lines) {
+      for (let i = 0; i < hexagramIndex.length; i++) {
+        const upper = hexagramIndex[i][0];
+        const lower = hexagramIndex[i][1];
+        if ((lines[0].val % 2 === 1) === lower[0] &&
+        (lines[1].val % 2 === 1) === lower[1] &&
+        (lines[2].val % 2 === 1) === lower[2] &&
+        (lines[3].val % 2 === 1) === upper[0] &&
+        (lines[4].val % 2 === 1) === upper[1] &&
+        (lines[5].val % 2 === 1) === upper[2]) {
+          this.modalHexagramNumber = i + 1;
+          break;
+        }
+      }
+      this.modalHexagramLines = lines;
+      this.showHexagramModal = true;
     }
   }
 }
