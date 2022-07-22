@@ -1,5 +1,5 @@
 <template>
-    <div class="hex_container col-4 col-md-2">
+    <div class="hex_container col-4 col-md-3">
         <div  v-for="line in lines" :key="line.idx">
           <div v-if="line.val % 2 === 1">
             <div class="line">
