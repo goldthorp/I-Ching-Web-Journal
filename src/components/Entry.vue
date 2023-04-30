@@ -1,9 +1,12 @@
 <template>
-    <div v-if="!content && !isHex" class="mt-2">
-      <button class="save_button btn btn-primary mb-2" @click="saveNew">save</button>
-      <button class="throw_button btn btn-primary mb-2" @click="clickThrowHex">throw hex</button>
+  <div ref="new_entry">
+    <div v-if="!content && !isHex && !isManualEntry" class="new_entry_main mt-2">
+      <button class="button save_button btn btn-primary mb-2" @click="saveNew">save</button>
+      <button class="button throw_button btn btn-primary mb-2 me-2" @click="clickThrowHex">throw hex</button>
+      <button class="button throw_button btn btn-primary mb-2" @click="clickManualEntry">manual entry</button>
       <textarea v-model="newContent"></textarea>
     </div>
+  </div>
   <div v-if="content">
     <p class="entry_date">{{ date }}</p>
     <p class="entry_text" v-if="!isHex">{{ content }}</p>
@@ -22,14 +25,25 @@
     </div>
   </div>
 
-    <div v-if="!content && isHex">
-      <button class="btn btn-primary" @click="throwLine">throw line</button>
-      <button class="btn btn-primary" @click="cancelThrowHex">cancel</button>
+    <div v-if="!content && !isManualEntry && isHex">
+      <button class="button btn btn-primary" @click="throwLine">throw line</button>
+      <button class="button btn btn-primary" @click="cancelThrowHex">cancel</button>
+    </div>
+
+    <div ref="manual_entry">
+      <div class="manual_entry" v-if="isManualEntry">
+        <div class="manual_entry_options">
+          <button v-for="i in [6, 7, 8, 9]" :key="i" @click="addLine(i, $event)"
+            class="btn" :class="{'btn-primary': [6, 9].includes(i)}">
+              {{ i }}
+          </button>
+        </div>
+        <button class="btn" @click="undoAddLine($event)">{{ hexLines.length ? 'undo' : 'back' }}</button>
+      </div>
     </div>
 </template>
 
 <script>
-import {hexagramIndex} from '../util/hexagram-index';
 import HexagramView from './Hexagram.vue'
 
 const hexPrefix = '/hex:';
@@ -50,7 +64,8 @@ export default {
       hexLines: [],
       isHex: false,
       hasChangingLines: false,
-      secondaryHexLines: []
+      secondaryHexLines: [],
+      isManualEntry: false
     }
   },
   computed: {
@@ -71,20 +86,38 @@ export default {
       this.hexLines.length = 0;
     },
     throwLine() {
-      this.hexLines.push({val: this.generateLineNumber(), idx: this.hexLines.length});
-      if (this.hexLines.length === 6) {
-        const lineNums = this.hexLines.map(line => line.val)
-        this.newContent = hexPrefix + lineNums.join('');
-        this.saveNew();
-        this.hexLines.length = 0;
-        this.isHex = false;
-      }
+      this.addLine(this.generateLineNumber());
     },
     generateLineNumber() { 
       var coin1 = Math.random() < .5;
       var coin2 = Math.random() < .5;
       var coin3 = Math.random() < .5;
       return (coin1 ? 3 : 2) + (coin2 ? 3 : 2) + (coin3 ? 3 : 2);
+    },
+    clickManualEntry() {
+      this.isHex = true;
+      this.isManualEntry = true;
+      setTimeout(() => this.$refs['manual_entry'].scrollIntoView({ behavior: 'instant' }));
+    },
+    addLine(i, $event) {
+      $event?.target.blur();
+      this.hexLines.push({val: i, idx: this.hexLines.length});
+      if (this.hexLines.length === 6) {
+        const lineNums = this.hexLines.map(line => line.val)
+        this.newContent = hexPrefix + lineNums.join('');
+        this.saveNew();
+        this.hexLines.length = 0;
+        this.isHex = false;
+        this.isManualEntry = false;
+      }
+    },
+    undoAddLine($event) {
+      $event?.target.blur();
+      const removed = this.hexLines.pop();
+      if (!removed) {
+        this.isHex = false;
+        this.isManualEntry = false;
+      }
     },
     clickHexagram(lines) {
       this.$emit('clickHexagram', lines);
@@ -113,6 +146,8 @@ export default {
         });
         
       }
+    } else {
+      setTimeout(() => this.$refs['new_entry'].scrollIntoView({ behavior: 'instant' }));
     }
   }
 }
@@ -120,6 +155,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.new_entry_main {
+  padding: 15px;
+}
 h3 {
   margin: 40px 0 0;
 }
@@ -134,10 +172,29 @@ li {
 a {
   color: #42b983;
 }
-button {
+.button {
   display: block;
   margin-left: auto;
   margin-right: auto;
+}
+.manual_entry {
+  margin-top: 25px;
+  margin-bottom: 45px;
+}
+.manual_entry_options {
+  margin-bottom: 35px;
+  padding: 0 15px;
+}
+.manual_entry_options>button {
+  padding: 20px 30px 15px;
+  font-size: 25px;
+  width: 25%;
+}
+.manual_entry_options>button:nth-of-type(2) {
+  padding-left: 7%;
+}
+.manual_entry_options>button:nth-of-type(3) {
+  padding-right: 7%;
 }
 textarea {
   width: 100%;
